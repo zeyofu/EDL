@@ -1,3 +1,39 @@
+# QuEL
+
+This is code for paper Design Challenges in Low-resource Cross-lingual Entity Linking (EMNLP'20). [https://arxiv.org/abs/2005.00692](https://arxiv.org/abs/2005.00692)
+
+We have a demo here [https://cogcomp.seas.upenn.edu/page/publication_view/911](https://cogcomp.seas.upenn.edu/page/publication_view/911)!
+
+## How to Cite
+
+A good research work is always accompanied by a thorough and faithful reference. If you use or extend our work, please cite the following paper:
+
+```
+```
+
+# Run Model
+
+### Clone Git Repository
+
+Clone the repository from our github page (don't forget to star us!)
+```bash
+git clone https://github.com/zeyofu/EDL.git
+```
+## Install all the requirements:
+
+```
+pip install -r requirements.txt
+```
+
+## Prepare Data and MongoDB
+
+## Prepare Google ID
+
+## Pretrained Bert Model
+
+## Run the Model
+
+
 The `candgen_v2_one_file.py` script generates a list of candidate entities from the Lorelei KB for each NER mention (as identified by the NER_CONLL view). 
 
 ### Setting Up Resources
