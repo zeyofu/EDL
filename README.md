@@ -9,6 +9,14 @@ We have a demo here [https://cogcomp.seas.upenn.edu/page/publication_view/911](h
 A good research work is always accompanied by a thorough and faithful reference. If you use or extend our work, please cite the following paper:
 
 ```
+@inproceedings{FSYZR20,
+    author = {Xingyu Fu and Weijia Shi and Xiaodong Yu and Zian Zhao and Dan Roth},
+    title = {{Design Challenges in Low-resource Cross-lingual Entity Linking}},
+    booktitle = {Proc. of the Conference on Empirical Methods in Natural Language Processing (EMNLP)},
+    year = {2020},
+    url = "https://cogcomp.seas.upenn.edu/papers/FSYZR20.pdf",
+    funding = {LORELEI},
+}
 ```
 
 # Run Model
