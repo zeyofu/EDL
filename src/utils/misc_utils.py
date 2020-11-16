@@ -13,6 +13,7 @@ logging.basicConfig(format='%(asctime)s: %(filename)s:%(lineno)d: %(message)s', 
 import time
 
 __author__ = 'Shyam'
+abs_path = "/shared/EDL19/wiki_outdir"
 
 
 def save(fname, obj):
@@ -90,7 +91,7 @@ def load_map_mongo(path, overwrite=False):
         tmp = {}
         # logging.info("pkl not found ...")
         logging.info("loading map from %s", path)
-        abs_path = "/shared/EDL19/wiki_outdir/" + path[5:]
+        abs_path = abs_path + path[5:]
         f = open(abs_path)
         err = 0
         for idx, l in enumerate(f):
@@ -303,7 +304,7 @@ def load_prob_map_mongo(out_prefix, kind, dbname=None, force_rewrite=False):
             probmap.drop_collection()
         # mmap = defaultdict(lambda: defaultdict(float))
         mmap = {}
-        abs_path = "/shared/EDL19/wiki_outdir/" + path[5:]
+        abs_path = abs_path + path[5:]
         for idx, line in enumerate(open(abs_path)):
             parts = line.split("\t")
             if idx > 0 and idx % 1000000 == 0:
