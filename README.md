@@ -56,6 +56,11 @@ The above script processes several files (controlled by `number of processes` ar
 
 ### Probability Files
 The `CandidateGenerator` class loads Wikipedia matches for a given string, each mapped to the probability of these matches. 
+#### Preprocessing Wikipedia for Candidate Generation
+First, preprocess the Wikipedia dump for the languages you care about using the [wikidump_preprocessing](https://github.com/shyamupa/wikidump_preprocessing) code here.
+
+#### Setting up Candidate Generation
+The code for performing candidate generation is available at [wiki_candgen](https://github.com/shyamupa/wiki_candgen). It uses the resources generated using the [wikidump_preprocessing](https://github.com/shyamupa/wikidump_preprocessing) repo.
 
 **IMPORTANT**: Probability files are required for this and are computed by running the makefile from the **wiki_processing** directory using `lang=CODE make all`, where `CODE` is the two-letter language code used by Wikipedia to identify the language. In the process of loading probability, the CandidateGenerator uses the full phrase to generate a wiki matches to probabilities map. It uses the words of the phrase to generate another wiki matches to probabilities map. It repeats the phrase matching and word matching process using the English version of the token. In total, four probability maps can be generated.
 
