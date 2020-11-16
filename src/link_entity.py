@@ -76,7 +76,6 @@ class CandGen:
         self.google_api_key = google_api_key
 
     def load_kb(self, kbdir):
-        self.m = MongoBackedDict(dbname='data/enwiki/idmap/enwiki-20190701.id2t.t2id')
         self.en_t2id = MongoBackedDict(dbname=f"en_t2id")
         self.en_id2t = MongoBackedDict(dbname=f"en_id2t")
         en_id2t_filepath = os.path.join(kbdir, "enwiki", "idmap", f'enwiki-{self.year}.id2t')
