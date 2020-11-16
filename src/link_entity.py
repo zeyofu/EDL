@@ -67,11 +67,13 @@ def get_wiki_summary(title):
 
 class CandGen:
     def __init__(self, lang=None, year=None,
-                 wiki_cg=None):
+                 wiki_cg=None, google_api_cx=None, google_api_key=None):
         self.lang = lang
         self.year = year
         self.wiki_cg = wiki_cg
         self.en_normalizer = TitleNormalizer(lang="en")
+        self.google_api_cx = google_api_cx
+        self.google_api_key = google_api_key
 
     def load_kb(self, kbdir):
         self.m = MongoBackedDict(dbname='data/enwiki/idmap/enwiki-20190701.id2t.t2id')
@@ -156,19 +158,6 @@ class CandGen:
                 l2s_map[key] = 100
         return l2s_map
 
-    def merge_l2s_map_by_entity(self, l2s_map):
-        l2s_map_new = {}
-        for key in l2s_map:
-            flag = False
-            title = key.split('|')[1]
-            for exist_key in l2s_map_new:
-                if title == exist_key.split('|')[1]:
-                    l2s_map_new[exist_key] += l2s_map[key]
-                    flag = True
-            if not flag and not key in l2s_map_new:
-                l2s_map_new[key] = l2s_map[key]
-        return l2s_map_new
-
     def cross_check_score(self, l2s_map, eids):
         freq = dict(Counter(eids))
         for cand, v in l2s_map.items():
@@ -234,10 +223,9 @@ class CandGen:
             logging.info('error, query not in text')
             return None, None, None
 
-    def get_l2s_map(self, eids, eids_google, eids_pivot, eids_google_maps, eids_spell, eids_gtrans, eids_trans, eids_wikicg,
-                    eids_total, ner_type, query_str, text, args):
+    def get_l2s_map(self, eids, eids_google, eids_pivot, eids_google_maps, eids_wikicg, eids_total, ner_type, query_str, text, args):
         if args.wikidata:
-            l2s_map = self.init_l2s_map(eids_wikicg + eids + eids_google + eids_pivot + eids_google_maps + eids_spell + eids_gtrans + eids_trans, args=args)
+            l2s_map = self.init_l2s_map(eids_wikicg + eids + eids_google + eids_pivot + eids_google_maps, args=args)
         else:
             l2s_map = self.init_l2s_map(eids_total, args=args)
 
@@ -268,10 +256,6 @@ class CandGen:
                 logging.info("Processing candidates bert")
                 query_emb = s2maskedvec(mask_sents(query_str, context_mention))
                 l2s_map = self.bert_score(l2s_map, query_emb, l2s_map, args)
-
-        # FOr rw, merge l2s_map
-        if self.lang == 'rw':
-            l2s_map = self.merge_l2s_map_by_entity(l2s_map)
 
         # Normalize
         sum_s = sum(list(l2s_map.values()))
@@ -306,13 +290,12 @@ class CandGen:
             ner_type = cons["ner_type"]
 
             query_str = self.clean_query(orig_query_str)
-            eids, eids_google, eids_pivot, eids_google_maps, eids_spell, eids_gtrans, eids_trans, eids_wikicg = self.get_all_candidates(orig_query_str, query_str, ner_type=ner_type, args=args)
-            eids_total = eids + eids_google + eids_pivot + eids_google_maps + eids_spell + eids_gtrans + eids_trans + eids_wikicg
+            eids, eids_google, eids_pivot, eids_google_maps, eids_wikicg = self.get_all_candidates(orig_query_str, query_str, ner_type=ner_type, args=args)
+            eids_total = eids + eids_google + eids_pivot + eids_google_maps + eids_wikicg
 
             logging.info("got %d candidates for query:%s", len(set(eids_total)), orig_query_str)
 
-            l2s_map = self.get_l2s_map(eids, eids_google, eids_pivot, eids_google_maps, eids_spell,
-                eids_gtrans, eids_trans, eids_wikicg, eids_total, ner_type=ner_type, query_str=orig_query_str, text=text, args=args)
+            l2s_map = self.get_l2s_map(eids, eids_google, eids_pivot, eids_google_maps, eids_wikicg, eids_total, ner_type=ner_type, query_str=orig_query_str, text=text, args=args)
             l2s_map = dict((x, y) for x, y in sorted(l2s_map.items(), key=operator.itemgetter(1), reverse=True))
             logging.info(f"got {len(l2s_map)} candidates after ranking for {orig_query_str}: {l2s_map}")
             max_cand, max_score = self.get_maxes_l2s_map(l2s_map)
@@ -370,12 +353,12 @@ class CandGen:
 
         eids_google_maps = []
         if ner_type in ['GPE', 'LOC'] and args.google_map and ((not args.wikidata) or (args.wikidata and len(eids_wikicg) == 0)):
-            google_map_name = query2gmap_api(query_str, self.lang)
+            google_map_name = query2gmap_api(query_str, self.lang, self.google_api_key)
             eids_google_maps += self._exact_match_kb(google_map_name, args)
             eids_google_maps += self._get_candidates_google(google_map_name, lang='en', top_num=args.google_top)[0]
-            google_map_name_suf = query2gmap_api(desuf_query_str, self.lang)
-            google_map_name_dot = [query2gmap_api(k, self.lang) for k in dot_query_str_list]
-            google_map_name_suf_dot = [query2gmap_api(k, self.lang) for k in desuf_dot_query_str_list]
+            google_map_name_suf = query2gmap_api(desuf_query_str, self.lang, self.google_api_key)
+            google_map_name_dot = [query2gmap_api(k, self.lang, self.google_api_key) for k in dot_query_str_list]
+            google_map_name_suf_dot = [query2gmap_api(k, self.lang, self.google_api_key) for k in desuf_dot_query_str_list]
             eids_google_maps += self._exact_match_kb(google_map_name_suf, args)
             eids_google_maps += self._get_candidates_google(google_map_name_suf, lang='en', top_num=args.google_top)[0]
             eids_google_maps += [h for k in google_map_name_dot for h in self._exact_match_kb(k, args)]
@@ -404,11 +387,7 @@ class CandGen:
             eids_pivot = list(set(eids_pivot))
         logging.info("got %d candidates for query:%s from pivoting", len(eids_pivot), query_str)
 
-        eids_spell = []
-        eids_gtrans = []
-        eids_gtrans = list(set(eids_gtrans))
-        eids_trans = []
-        return eids, eids_google, eids_pivot, eids_google_maps, eids_spell, eids_gtrans, eids_trans, eids_wikicg
+        return eids, eids_google, eids_pivot, eids_google_maps, eids_wikicg
 
     def _get_candidates_google(self, surface, top_num=1, lang=None, include_all_lang=False):
         eids = []
@@ -417,7 +396,7 @@ class CandGen:
             return eids, wikititles
         if lang is None:
             lang = self.lang
-        en_surfaces = query2enwiki(surface, lang, include_all_lang=include_all_lang)[:top_num]
+        en_surfaces = query2enwiki(surface, lang, self.google_api_key, self.google_api_cx, include_all_lang=include_all_lang)[:top_num]
         for en in en_surfaces:
             if en not in wikititles:
                 wikititles.append(en)
@@ -474,30 +453,32 @@ class CandGen:
 if __name__ == '__main__':
     # For demo
     PARSER = argparse.ArgumentParser(description='Short sample app')
-    PARSER.add_argument('--kbdir', default="/shared/EDL19/wiki_outdir", type=str)
-    PARSER.add_argument('--lang', default='', type=str)
+    PARSER.add_argument('--kbdir', default="../data/wiki_outdir", type=str, help='dir of preprocessed wiki')
+    PARSER.add_argument('--lang', default='ilo', type=str)
     PARSER.add_argument('--year', default="20191020")
-    PARSER.add_argument('--input_file', default='../data/input/example_input_json_english', help='json input with text and ner entities')
-    # data source
-    PARSER.add_argument('--wikidata', default=0, type=int)
-    # use P(t|m)
-    PARSER.add_argument('--wikicg', default=1, type=int)
+    PARSER.add_argument('--input_file', default='../data/input/example_illocano', help='json input with text and ner entities')
+    PARSER.add_argument('--wikidata', default=0, type=int, help='if data source is wikipedia')
+    PARSER.add_argument('--wikicg', default=1, type=int, help='use P(e|m)')
     # For Cand gen
     PARSER.add_argument('--google', default=1, type=int)
-    PARSER.add_argument('--google_top', type=int, default=5)
+    PARSER.add_argument('--google_top', default=5, type=int)
     PARSER.add_argument('--google_map', default=1, type=int)
+    PARSER.add_argument('--google_api_cx', default='', type=str, help='https://programmablesearchengine.google.com/')
+    PARSER.add_argument('--google_api_key', default='', type=str, help='https://developers.google.com/custom-search/v1/overview')
     PARSER.add_argument('--pivoting', default=1, type=int)
     # For Ranking
     PARSER.add_argument('--bert', default=0, type=int)
-    PARSER.add_argument('--bert_model_path', default='', type=str)
+    PARSER.add_argument('--bert_model_path', default='', type=str, help='use downloaded pretrained multilingual bert')
     args = PARSER.parse_args()
     logging.info(args)
     logging.disable(logging.INFO)
 
     if not args.lang:
         sys.exit('No language specified.')
+    if args.google and (not args.google_api_key or not args.google_api_cx):
+        sys.exit('No google api key and cx')
 
-    # load proprocessed wiki
+    # load pro-processed wiki
     if args.wikicg:
         wiki_cg = CandidateGenerator(K=6, kbfile=None, lang=args.lang, use_eng=False, fallback=True)
         wiki_cg.load_probs("data/{}wiki/probmap/{}wiki-{}".format(args.lang, args.lang, args.year))
@@ -506,12 +487,11 @@ if __name__ == '__main__':
 
     # load bert
     if args.bert:
-        model_path = args.bert_model_path
-        args.tokenizer = BertTokenizer.from_pretrained(model_path)
-        model = BertModel.from_pretrained(model_path, from_tf=False)
+        args.tokenizer = BertTokenizer.from_pretrained('bert-base-multilingual-cased')
+        model = BertModel.from_pretrained(args.bert_model_path, from_tf=False)
     lang = args.lang
 
-    cg = CandGen(lang=args.lang, year=args.year, wiki_cg=wiki_cg)
+    cg = CandGen(lang=args.lang, year=args.year, wiki_cg=wiki_cg, google_api_cx=google_api_cx, google_api_key=google_api_key)
     cg.load_kb(args.kbdir)
 
     # Mongodb

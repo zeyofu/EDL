@@ -5,9 +5,10 @@ scipy
 sklearn
 google
 googlemaps
+pymongo
 bs4
 torch
 pytorch_pretrained_bert
-wikipedia
+Wikipedia-API
 flashtext
 hanziconv

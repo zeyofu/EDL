@@ -1,8 +1,5 @@
-import glob
 import itertools
 import re
-# from write_data_to_annotate import camel
-from ccg_nlpy import TextAnnotation
 import logging
 
 
@@ -153,13 +150,3 @@ def remove_consecutive_duplicates(word):
     if removed != word:
         ans.append(removed)
     return ans
-
-
-def load_ta_from_jsons(json_dir):
-    doc2ta = {}
-    tafiles = glob.glob(json_dir + "/*")
-    for tafile in tafiles:
-        ta = TextAnnotation(json_str=open(tafile).read())
-        docid = tafile.split("/")[-1]
-        doc2ta[docid] = ta
-    return doc2ta
