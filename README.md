@@ -48,10 +48,10 @@ Note the mongo should be run in the port 27017.
 First, preprocess the Wikipedia dump for the languages you care about using the [wikidump_preprocessing](https://github.com/shyamupa/wikidump_preprocessing) code here. Preprocessing wikis into a folder outwiki consisting of different language wikipedia folder. For example, the layout of outwiki folder should be:
 ```
 – outwiki:\
-   &emsp;  – enwiki\
-    &emsp; – eswiki\
-    &emsp; – zhwiki \
-    &emsp; ....
+     – enwiki\
+     – eswiki\
+     – zhwiki \
+       ....
 ```
 ### load data to Mongo
 Set the abs_path in `utils/misc_utils.py` to `outwiki`. When you first time run the `link_entity.py`, data will be automatically loaded to mongo. (It may take a long time)
