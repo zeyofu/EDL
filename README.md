@@ -46,15 +46,15 @@ Note the mongo should be run in the port 27017.
 
 ### Preprocessing Wikipedia for Candidate Generation
 First, preprocess the Wikipedia dump for the languages you care about using the [wikidump_preprocessing](https://github.com/shyamupa/wikidump_preprocessing) code here. Preprocessing wikis into a folder outwiki consisting of different language wikipedia folder. For example, the layout of outwiki folder should be:
-
+```
 – outwiki:\
    &emsp;  – enwiki\
     &emsp; – eswiki\
     &emsp; – zhwiki \
     &emsp; ....
-
+```
 ### load data to Mongo
-Set the abs_path in `utils/misc_utils.py` to outwiki. When you first time run the `link_entity.py`, data will be automatically loaded to mongo. (It may take a long time)
+Set the abs_path in `utils/misc_utils.py` to `outwiki`. When you first time run the `link_entity.py`, data will be automatically loaded to mongo. (It may take a long time)
 
 
 ## Prepare Google ID
@@ -72,7 +72,7 @@ Download pretrained Multilingual Bert or train own Bert model.
 cd src
 python link_entity.py --kbdir ${kbdir} --lang ${lang} --year ${year}
 ```
-where `kbdir` is directory of preprocessed wikipedia, `lang` is [language code](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) used in Preprocessing Wikipedia, and `year` is downloaded wikipedia version (e.g. "20191020").
+where `kbdir` is directory of preprocessed wikipedia `outwiki`, `lang` is [language code](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) used in Preprocessing Wikipedia, and `year` is downloaded wikipedia version (e.g. "20191020").
 
 
 
