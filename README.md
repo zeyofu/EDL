@@ -34,9 +34,9 @@ The code for performing candidate generation is available at [wiki_candgen](http
 
 
 ## Prepare Google ID
-1. Get google_api_key following https://developers.google.com/custom-search/v1/overview. 
-2. Get google_api_cx (search engine ID) from [https://programmablesearchengine.google.com/](https://programmablesearchengine.google.com/), on which set "Sites to search" as *.wikipedia.org, map.google.com. 
-3. Use google_api_cx and google_api_key as parameters to run src/link_entity.py
+1. Get `google_api_key` following https://developers.google.com/custom-search/v1/overview. 
+2. Get `google_api_cx` (search engine ID) from [https://programmablesearchengine.google.com/](https://programmablesearchengine.google.com/), on which set "Sites to search" as `*.wikipedia.org`, `map.google.com`. 
+3. Use `google_api_cx` and `google_api_key` as parameters to run src/link_entity.py
 
 ## Pretrained Bert Model
 Download pretrained Multilingual Bert or train own Bert model.
@@ -47,7 +47,7 @@ Download pretrained Multilingual Bert or train own Bert model.
 ```
 python link_entity.py --kbdir ${kbdir} --lang ${lang} --year ${year}
 ```
-where kbdir is directory of preprocessed wikipedia, lang is language, and year is wikipedia version (e.g. "20191020").
+where `kbdir` is directory of preprocessed wikipedia, `lang` is [language code](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) used in Preprocessing Wikipedia, and `year` is downloaded wikipedia version (e.g. "20191020").
 
 
 ### Setting Up Resources
