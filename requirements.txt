@@ -1,0 +1,12 @@
+tqdm
+nltk
+numpy
+scipy
+sklearn
+google
+googlemaps
+bs4
+torch
+pytorch_pretrained_bert
+wikipedia
+flashtext
