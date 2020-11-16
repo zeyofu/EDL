@@ -53,6 +53,7 @@ Download pretrained Multilingual Bert or train own Bert model.
 ## Run the Model
 
 ```
+cd src
 python link_entity.py --kbdir ${kbdir} --lang ${lang} --year ${year}
 ```
 where `kbdir` is directory of preprocessed wikipedia, `lang` is [language code](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) used in Preprocessing Wikipedia, and `year` is downloaded wikipedia version (e.g. "20191020").
