@@ -10,3 +10,4 @@ torch
 pytorch_pretrained_bert
 wikipedia
 flashtext
+hanziconv
