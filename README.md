@@ -38,7 +38,7 @@ pip install -r requirements.txt
 ### Setting up mongo
 For faster processing we store the various maps (e.g. string to Wikipedia candidates, string to Lorelei KB candidates etc.) in a mongodb database collection. MongoDB stores various statistics and string-to-candidate indices that are used to compute candidates. To start up the Mongo DB daemon, run: 
 ```bash
-mongod --dbpath /shared/bronte/upadhya3/tac2018/mongo_data
+mongod --dbpath your_mongo_path
 ``` 
 The `dbpath` argument is where mongodb creates the database and indexes. You can specify a different path, but you need to rebuild th indices below. 
 
