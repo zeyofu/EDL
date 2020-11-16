@@ -45,13 +45,10 @@ def s2maskedvec(masked_sents):
     for sent in masked_sents:
         tokenized_text = args.tokenizer.tokenize(sent)
         pos = tokenized_text.index('[MASK]')
-        indexed_tokens = args.tokenizer.convert_tokens_to_ids(tokenized_text)
         # Convert token to vocabulary indices
         indexed_tokens = args.tokenizer.convert_tokens_to_ids(tokenized_text)
-
         # Convert inputs to PyTorch tensors
         tokens_tensor = torch.tensor([indexed_tokens])
-
         # Predict hidden states features for each layer
         with torch.no_grad():
             encoded_layers, _ = model(tokens_tensor)
@@ -408,13 +405,9 @@ class CandGen:
         logging.info("got %d candidates for query:%s from pivoting", len(eids_pivot), query_str)
 
         eids_spell = []
-
         eids_gtrans = []
         eids_gtrans = list(set(eids_gtrans))
-        # logging.info("got %d candidates for query:%s from google trans", len(set(eids_gtrans)), query_str)
-
         eids_trans = []
-
         return eids, eids_google, eids_pivot, eids_google_maps, eids_spell, eids_gtrans, eids_trans, eids_wikicg
 
     def _get_candidates_google(self, surface, top_num=1, lang=None, include_all_lang=False):
@@ -428,16 +421,7 @@ class CandGen:
         for en in en_surfaces:
             if en not in wikititles:
                 wikititles.append(en)
-        # wikititles += en_surfaces
         eids = wikititles
-        # query_str_list = en_surfaces
-        # for surf in en_surfaces:
-        #     query_str_list += correct_surface(surf, self.lang)
-
-        # for s in query_str_list:
-            # eids += [self.m[s.replace(' ', '_')]]
-            # eids += self.get_phrase_cands(s)
-        # logging.info("#direct cands (phrase): %d", len(eids))
         return eids, wikititles
 
     def _extract_ptm_cands(self, cands):
@@ -445,11 +429,10 @@ class CandGen:
         for cand in cands:
             wikititle, p_t_given_s, p_s_given_t = cand.en_title, cand.p_t_given_s, cand.p_s_given_t
             nrm_title = self.en_normalizer.normalize(wikititle)
-            if nrm_title == K.NULL_TITLE:  # REMOVED or nrm_title not in en_normalizer.title2id
+            if nrm_title == K.NULL_TITLE:
                 logging.info("bad cand %s nrm=%s", wikititle, nrm_title)
                 continue
             wiki_id = self.en_normalizer.title2id[nrm_title]
-            # if wiki_id is none
             if wiki_id is None:
                 wiki_id = self.en_normalizer.title2id[wikititle]
                 if wiki_id is None:
@@ -479,7 +462,6 @@ class CandGen:
         ans = []
         if surf in self.t2id:
             cands = self.t2id[surf]
-            # logging.info("#phrase cands geoname %d for %s", len(cands), surf)
             ans += cands
         if surf in self.en_t2id:
             cands = self.en_t2id[surf]
