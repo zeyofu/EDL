@@ -2,7 +2,7 @@
 
 This is code for paper Design Challenges in Low-resource Cross-lingual Entity Linking (EMNLP'20). [https://arxiv.org/abs/2005.00692](https://arxiv.org/abs/2005.00692)
 
-We have a demo [here](https://cogcomp.seas.upenn.edu/dc4034/), and our paper page is [here] (https://cogcomp.seas.upenn.edu/page/publication_view/911)!
+We have a demo [here](https://cogcomp.seas.upenn.edu/dc4034/), and our paper page is [here](https://cogcomp.seas.upenn.edu/page/publication_view/911)!
 
 ## How to Cite
 
